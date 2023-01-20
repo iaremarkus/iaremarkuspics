@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import cloudinary from "cloudinary";
+import { Folder, Image } from "@/models/types";
 
 type Data = any;
 
@@ -14,18 +15,24 @@ export const getFolders = async () => {
         ).toString("base64")}`,
       },
     }
-  )
-    .then((r) => r.json())
-    .then((r) => r.folders);
+  );
 
-  return response as JSON;
+  const json = await response.json();
+
+  const foldersPromise = await Promise.allSettled(
+    json.folders.map(async (f: Folder) => {
+      const featured = await getImages(f.name, 1);
+      return { featured: featured[0].url, ...f };
+    })
+  );
+
+  const folders = foldersPromise.map((f: any) => f.value);
+
+  return folders as Folder[];
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
-  const { showFolders } = req.query;
+export const getImages = async (folder: string, count: number = 300) => {
+  console.log("image", folder, count);
 
   const cl = cloudinary.v2;
 
@@ -35,11 +42,25 @@ export default async function handler(
     api_secret: process.env.CLOUDINARY_SECRET,
   });
 
-  const folders: JSON = await getFolders();
-  const images: any = await cl.search
-    .expression("folder:iaremarkuspics/birds")
+  const results = await cl.search
+    .expression(`folder:iaremarkuspics/${folder}`)
+    .max_results(count || 500)
     .execute()
     .then((result) => result.resources);
 
-  res.status(200).json(showFolders ? folders : images);
+  return results;
+};
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) {
+  const { folder } = req.query;
+
+  const folders: Folder[] = await getFolders();
+  const images: Image[] | null = folder
+    ? await getImages(folder as string)
+    : null;
+
+  res.status(200).json({ folders, images });
 }
