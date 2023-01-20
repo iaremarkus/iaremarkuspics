@@ -2,14 +2,31 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import cloudinary from "cloudinary";
 
-type Data = {
-  name: string;
+type Data = any;
+
+export const getFolders = async () => {
+  const response = await fetch(
+    `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD}/folders/iaremarkuspics`,
+    {
+      headers: {
+        Authorization: `Basic ${Buffer.from(
+          process.env.CLOUDINARY_KEY + ":" + process.env.CLOUDINARY_SECRET
+        ).toString("base64")}`,
+      },
+    }
+  )
+    .then((r) => r.json())
+    .then((r) => r.folders);
+
+  return response as JSON;
 };
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
+  const { showFolders } = req.query;
+
   const cl = cloudinary.v2;
 
   cl.config({
@@ -18,32 +35,11 @@ export default async function handler(
     api_secret: process.env.CLOUDINARY_SECRET,
   });
 
-  // b64 encode a string
-  const base64 = {
-    encode: (str: string) => Buffer.from(str).toString("base64"),
-  };
-
-  const requestHeaders = {
-    authorization: `Basic ${base64.encode(
-      process.env.CLOUDINARY_KEY + ":" + process.env.CLOUDINARY_SECRET
-    )}`,
-  };
-  const folders: any = await fetch(
-    `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD}/folders`,
-    {
-      method: "GET",
-      headers: requestHeaders,
-    }
-  ).then((result) => {
-    console.log(result.json());
-
-    return result;
-  });
-
+  const folders: JSON = await getFolders();
   const images: any = await cl.search
     .expression("folder:iaremarkuspics/birds")
     .execute()
     .then((result) => result.resources);
 
-  res.status(200).json(folders);
+  res.status(200).json(showFolders ? folders : images);
 }
