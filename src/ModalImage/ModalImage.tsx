@@ -22,8 +22,18 @@ export const ModalImage = ({ src, width, height, className = "", ...props }: Mod
   }, [escape]);
 
   return (
-    <>
-      <Image src={src} width={width} height={height} alt="Image" style={{ margin: 10 }} onClick={toggleModal} />
+    <div>
+      <motion.div whileHover={{ scale: 1.05 }}>
+        <Image
+          src={src}
+          width={width}
+          height={height}
+          alt="Image"
+          style={{ margin: 10 }}
+          onClick={toggleModal}
+          className="cursor-pointer"
+        />
+      </motion.div>
 
       <AnimatePresence>
         {open && (
@@ -45,6 +55,6 @@ export const ModalImage = ({ src, width, height, className = "", ...props }: Mod
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 };

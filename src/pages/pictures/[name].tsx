@@ -41,7 +41,7 @@ export default function Home({ images }: Data) {
 
         <Gallery
           photos={pics}
-          columns={3}
+          columns={2}
           margin={10}
           renderImage={({ photo: { src, height, width } }) => (
             <ModalImage key={`gallery-${src}`} width={width} height={height} src={src} />

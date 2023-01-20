@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from "next";
-import cloudinary from "cloudinary";
 import { Folder, Image } from "@/models/types";
+import cloudinary from "cloudinary";
+import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data = any;
 
@@ -10,10 +10,10 @@ export const getFolders = async () => {
     `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD}/folders/iaremarkuspics`,
     {
       headers: {
-        Authorization: `Basic ${Buffer.from(
-          process.env.CLOUDINARY_KEY + ":" + process.env.CLOUDINARY_SECRET
-        ).toString("base64")}`,
-      },
+        Authorization: `Basic ${Buffer.from(process.env.CLOUDINARY_KEY + ":" + process.env.CLOUDINARY_SECRET).toString(
+          "base64"
+        )}`
+      }
     }
   );
 
@@ -39,28 +39,23 @@ export const getImages = async (folder: string, count: number = 300) => {
   cl.config({
     cloud_name: process.env.CLOUDINARY_CLOUD,
     api_key: process.env.CLOUDINARY_KEY,
-    api_secret: process.env.CLOUDINARY_SECRET,
+    api_secret: process.env.CLOUDINARY_SECRET
   });
 
   const results = await cl.search
     .expression(`folder:iaremarkuspics/${folder}`)
     .max_results(count || 500)
     .execute()
-    .then((result) => result.resources);
+    .then(result => result.resources);
 
   return results;
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   const { folder } = req.query;
 
   const folders: Folder[] = await getFolders();
-  const images: Image[] | null = folder
-    ? await getImages(folder as string)
-    : null;
+  const images: Image[] | null = folder ? await getImages(folder as string) : null;
 
   res.status(200).json({ folders, images });
 }
