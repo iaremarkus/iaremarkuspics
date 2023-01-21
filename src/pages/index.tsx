@@ -1,6 +1,7 @@
 import { Folder, Image } from "@/models/types";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
+import Script from "next/script";
 
 import { FolderLink } from "..";
 
@@ -12,6 +13,17 @@ type Data = {
 export default function Home({ folders }: Data) {
   return (
     <div className="bg-slate-900 min-h-screen">
+      <Script src="https://www.googletagmanager.com/gtag/js?id=G-M7CFEQJ0J9" strategy="afterInteractive" />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+        
+          gtag('config', 'G-M7CFEQJ0J9');
+        `}
+      </Script>
+
       <Head>
         <title>Pictures by iaremarkus | cc IG: iaremarkuspics</title>
         <meta name="description" content="Pictures by iaremarkus | cc IG: iaremarkuspics" />

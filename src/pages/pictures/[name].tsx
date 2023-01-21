@@ -4,6 +4,7 @@ import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import Script from "next/script";
 import Gallery from "react-photo-gallery";
 
 type Data = {
@@ -28,6 +29,17 @@ export default function Home({ images }: Data) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
+      <Script src="https://www.googletagmanager.com/gtag/js?id=G-M7CFEQJ0J9" strategy="afterInteractive" />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+        
+          gtag('config', 'G-M7CFEQJ0J9');
+        `}
+      </Script>
 
       <main className="p-4 md:p-10 lg:p-20 min-h-screen bg-gray-900">
         <div className="mb-2 md:mb-5 lg:mb-10">
