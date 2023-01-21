@@ -32,8 +32,6 @@ export const getFolders = async () => {
 };
 
 export const getImages = async (folder: string, count: number = 300) => {
-  console.log("image", folder, count);
-
   const cl = cloudinary.v2;
 
   cl.config({
