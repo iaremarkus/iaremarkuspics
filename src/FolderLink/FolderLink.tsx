@@ -1,8 +1,8 @@
 import classNames from "classnames";
 import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
+import NextImage from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export interface FolderLinkProps {
   className?: string;
@@ -13,6 +13,11 @@ export interface FolderLinkProps {
 export const FolderLink = ({ name, featured, className = "", ...props }: FolderLinkProps) => {
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const toggleIsHovered = () => setIsHovered(!isHovered);
+
+  useEffect(() => {
+    const newImage = new Image();
+    newImage.src = featured;
+  }, [featured]);
 
   const colors = useMemo(
     () => [
@@ -55,7 +60,7 @@ export const FolderLink = ({ name, featured, className = "", ...props }: FolderL
             animate={{ opacity: 1 }}
             className="fixed w-1/2 h-screen top-0 right-0 bg-slate-50 z-10"
           >
-            <Image src={featured} fill alt={"Image"} className="object-cover" />
+            <NextImage src={featured} fill alt={"Image"} className="object-cover" />
           </motion.div>
         )}
       </AnimatePresence>
