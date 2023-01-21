@@ -43,7 +43,7 @@ export const FolderLink = ({ name, featured, className = "", ...props }: FolderL
       >
         <h2
           className={classNames(
-            "capitalize text-2xl md:text-4xl lg:text-7xl font-bold",
+            "capitalize text-4xl md:text-6xl lg:text-7xl font-bold",
             "transition text-transparent bg-clip-text bg-gradient-to-br drop-shadow-xl",
             color
           )}

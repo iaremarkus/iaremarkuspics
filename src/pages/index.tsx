@@ -11,14 +11,17 @@ type Data = {
 
 export default function Home({ folders }: Data) {
   return (
-    <>
+    <div className="bg-slate-900 min-h-screen">
       <Head>
         <title>Pictures by iaremarkus | cc IG: iaremarkuspics</title>
         <meta name="description" content="Pictures by iaremarkus | cc IG: iaremarkuspics" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="p-4 md:p-10 lg:p-20 bg-slate-900 flex justify-between flex-col min-h-screen">
+      <main
+        className="p-4 md:p-10 lg:p-20 flex justify-between flex-col min-h-screen"
+        style={{ minHeight: "calc(100vh - 50px)" }}
+      >
         <div className="flex flex-col gap-2 pb-16">
           {folders?.map(({ name, featured }: Folder, idx: number) => (
             <FolderLink key={idx} name={name} featured={featured} />
@@ -43,7 +46,7 @@ export default function Home({ folders }: Data) {
           iaremarkuspics
         </a>
       </main>
-    </>
+    </div>
   );
 }
 
