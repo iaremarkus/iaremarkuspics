@@ -5,17 +5,18 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data = any;
 
-export const getFolders = async () => {
-  const response = await fetch(
-    `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD}/folders/iaremarkuspics`,
-    {
-      headers: {
-        Authorization: `Basic ${Buffer.from(process.env.CLOUDINARY_KEY + ":" + process.env.CLOUDINARY_SECRET).toString(
-          "base64"
-        )}`
-      }
+/**
+ * Get all folders in the specified folder
+ * @returns array of Folder objects
+ */
+export const getFolders = async (folder: string) => {
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD}/folders/${folder}`, {
+    headers: {
+      Authorization: `Basic ${Buffer.from(process.env.CLOUDINARY_KEY + ":" + process.env.CLOUDINARY_SECRET).toString(
+        "base64"
+      )}`
     }
-  );
+  });
 
   const json = await response.json();
 
@@ -31,7 +32,15 @@ export const getFolders = async () => {
   return folders as Folder[];
 };
 
-export const getImages = async (folder: string, count: number = 300) => {
+/**
+ * This function is used to get all the images from the specified child folder of the parent folder
+ *
+ * @param parentFolder Likely the same as `folder` in `getFolders` function
+ * @param folder The name of the child folder to get images from. This is used in `[name].tsx`
+ * @param count How many images to return
+ * @returns array of Image objects
+ */
+export const getImages = async (parentFolder: string, folder: string, count: number = 300) => {
   const cl = cloudinary.v2;
 
   cl.config({
@@ -41,7 +50,7 @@ export const getImages = async (folder: string, count: number = 300) => {
   });
 
   const results = await cl.search
-    .expression(`folder:iaremarkuspics/${folder}`)
+    .expression(`folder:${parentFolder}/${folder}`)
     .max_results(count || 500)
     .execute()
     .then(result => result.resources);
@@ -49,11 +58,14 @@ export const getImages = async (folder: string, count: number = 300) => {
   return results;
 };
 
+/**
+ * API route to get all folders and images
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   const { folder } = req.query;
 
-  const folders: Folder[] = await getFolders();
-  const images: Image[] | null = folder ? await getImages(folder as string) : null;
+  const folders: Folder[] = await getFolders("iaremarkuspics");
+  const images: Image[] | null = folder ? await getImages("iaremarkuspics", folder as string) : null;
 
   res.status(200).json({ folders, images });
 }
