@@ -22,7 +22,8 @@ export const getFolders = async (folder: string) => {
 
   const foldersPromise = await Promise.allSettled(
     json.folders.map(async (f: Folder) => {
-      const featured = await getImages(f.name, 1);
+      const featured = await getImages("iaremarkuspics", f.name, 1);
+
       return { featured: featured[0].url, ...f };
     })
   );
@@ -38,9 +39,15 @@ export const getFolders = async (folder: string) => {
  * @param parentFolder Likely the same as `folder` in `getFolders` function
  * @param folder The name of the child folder to get images from. This is used in `[name].tsx`
  * @param count How many images to return
+ * @param tag Cloudinary tag to filter images by - defaults to 'featured'
  * @returns array of Image objects
  */
-export const getImages = async (parentFolder: string, folder: string, count: number = 300) => {
+export const getImages = async (
+  parentFolder: string,
+  folder: string,
+  count: number = 300,
+  tag: string = "featured"
+) => {
   const cl = cloudinary.v2;
 
   cl.config({
@@ -50,7 +57,7 @@ export const getImages = async (parentFolder: string, folder: string, count: num
   });
 
   const results = await cl.search
-    .expression(`folder:${parentFolder}/${folder}`)
+    .expression(`folder:${parentFolder}/${folder} tag:${tag}`)
     .max_results(count || 500)
     .execute()
     .then(result => result.resources);
