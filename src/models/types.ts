@@ -2,6 +2,7 @@ export interface Folder {
   name: string;
   path: string;
   featured?: Image;
+  count: number;
 }
 
 export interface Image {

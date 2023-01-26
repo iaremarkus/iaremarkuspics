@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import { AnimatePresence, motion } from "framer-motion";
-import NextImage from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
@@ -8,9 +7,10 @@ export interface FolderLinkProps {
   className?: string;
   name: string;
   featured?: any;
+  count: number;
 }
 
-export const FolderLink = ({ name, featured, className = "", ...props }: FolderLinkProps) => {
+export const FolderLink = ({ name, featured, count, className = "", ...props }: FolderLinkProps) => {
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const toggleIsHovered = () => setIsHovered(!isHovered);
 
@@ -34,22 +34,27 @@ export const FolderLink = ({ name, featured, className = "", ...props }: FolderL
 
   return (
     <>
-      <Link
-        href={`/pictures/${name}`}
-        {...props}
-        className="relative z-20"
-        onMouseOver={toggleIsHovered}
-        onMouseOut={toggleIsHovered}
-      >
-        <h2
+      <Link href={`/pictures/${name}`} {...props} onMouseOver={toggleIsHovered} onMouseOut={toggleIsHovered}>
+        <span
           className={classNames(
-            "capitalize text-4xl md:text-6xl lg:text-7xl font-bold",
+            "relative z-20 inline-flex capitalize text-4xl md:text-6xl lg:text-7xl font-bold",
             "transition text-transparent bg-clip-text bg-gradient-to-br drop-shadow-xl",
+            "pr-5",
             color
           )}
         >
           {name.replaceAll("-", " ")}
-        </h2>
+
+          <small
+            className={classNames(
+              "absolute text-white text-xs font-bold w-7 h-7 rounded-full",
+              "bg-gradient-to-br flex items-center justify-center right-0",
+              color
+            )}
+          >
+            {count}
+          </small>
+        </span>
       </Link>
 
       <AnimatePresence>
@@ -60,7 +65,8 @@ export const FolderLink = ({ name, featured, className = "", ...props }: FolderL
             animate={{ opacity: 1 }}
             className="fixed w-1/2 h-screen top-0 right-0 bg-slate-50 z-10"
           >
-            <NextImage src={featured} fill alt={"Image"} className="object-cover" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={featured} alt={"Image"} className="object-cover h-full" />
           </motion.div>
         )}
       </AnimatePresence>

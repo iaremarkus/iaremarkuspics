@@ -1,16 +1,13 @@
 import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useKeyPress } from "react-use";
 
 export interface ModalImageProps {
   className?: string;
   src: string;
-  width: number;
-  height: number;
 }
 
-export const ModalImage = ({ src, width, height, className = "", ...props }: ModalImageProps) => {
+export const ModalImage = ({ src, className = "", ...props }: ModalImageProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const toggleModal = () => setOpen(!open);
 
@@ -24,15 +21,8 @@ export const ModalImage = ({ src, width, height, className = "", ...props }: Mod
   return (
     <div>
       <motion.div whileHover={{ scale: 1.05 }}>
-        <Image
-          src={src}
-          width={width}
-          height={height}
-          alt="Image"
-          style={{ margin: 10 }}
-          onClick={toggleModal}
-          className="cursor-pointer"
-        />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={src} alt="Image" onClick={toggleModal} className="cursor-pointer w-full h-full object-cover" />
       </motion.div>
 
       <AnimatePresence>
@@ -45,13 +35,7 @@ export const ModalImage = ({ src, width, height, className = "", ...props }: Mod
             onClick={toggleModal}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={src}
-              width={width}
-              height={height}
-              alt="Image"
-              style={{ width: "100%", height: "100%", objectFit: "contain" }}
-            />
+            <img src={src} alt="Image" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,25 +1,17 @@
 import { ModalImage } from "@/ModalImage";
-import { Folder, Image as I } from "@/models/types";
+import { ListObjectsCommand, S3Client } from "@aws-sdk/client-s3";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Script from "next/script";
-import Gallery from "react-photo-gallery";
+import path from "path";
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 
-type Data = {
-  folders: Folder[];
-  images: I[];
-};
-
-export default function Home({ images }: Data) {
+export default function Home({ pictures }: any) {
   const {
     query: { name }
   } = useRouter();
-
-  const pics = images.map(({ url, width, height }) => {
-    return { src: url, width, height };
-  });
 
   return (
     <>
@@ -38,8 +30,8 @@ export default function Home({ images }: Data) {
       </Script>
 
       <Head>
-        <title>{name} | Pictures by iaremarkus | cc IG: iaremarkuspics</title>
-        <meta name="description" content="Pictures by iaremarkus | cc IG: iaremarkuspics" />
+        <title>Photos of {name} | Photos by iaremarkus | cc IG: iaremarkuspics</title>
+        <meta name="description" content="Photos by iaremarkus | cc IG: iaremarkuspics" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link
           rel="shortcut icon"
@@ -58,14 +50,13 @@ export default function Home({ images }: Data) {
           </Link>
         </div>
 
-        <Gallery
-          photos={pics}
-          columns={2}
-          margin={10}
-          renderImage={({ photo: { src, height, width } }) => (
-            <ModalImage key={`gallery-${src}`} width={width} height={height} src={src} />
-          )}
-        />
+        <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3 }}>
+          <Masonry gutter="2vw">
+            {pictures?.map(({ src }: { src: string }) => (
+              <ModalImage key={`gallery-${src}`} src={src} />
+            ))}
+          </Masonry>
+        </ResponsiveMasonry>
 
         <a
           href="https://instagram.com/iaremarkuspics"
@@ -89,13 +80,42 @@ export default function Home({ images }: Data) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const { name } = params || {};
+export const getServerSideProps: GetServerSideProps = async context => {
+  const s3Client = new S3Client({
+    region: process.env.AWS_REGION as string,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+      secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET as string
+    }
+  });
 
-  // Fetch data from external API
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/images?folder=${name}`);
-  const { folders, images }: Data = await res.json();
+  // Create the parameters for the bucket
+  const bucketParams = { Bucket: process.env.AWS_BUCKET as string };
+  let pictures: any[] = [];
+
+  try {
+    const { Contents } = await s3Client.send(new ListObjectsCommand(bucketParams));
+    const data = Contents as [];
+
+    pictures = data
+      .filter(({ Key }: { Key: string }) => Key.split("/")[0] === `_${context.params?.name}`)
+      .reduce((arr: any[], item: any) => {
+        const { Key } = item;
+        const key = Key.split("/")[1];
+        const src = `${process.env.AWS_BUCKET_URL + Key}`;
+        const { name } = path.parse(key);
+
+        arr.push({
+          src,
+          name
+        });
+
+        return arr;
+      }, []);
+  } catch (err) {
+    console.log("Error", err);
+  }
 
   // Pass folders to the page via props
-  return { props: { folders, images } };
+  return { props: { pictures } };
 };
