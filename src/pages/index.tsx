@@ -58,9 +58,9 @@ export default function Home({ folders }: any) {
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const s3Client = new S3Client({
-    region: process.env.AWS_REGION as string,
+    region: process.env.SITE_AWS_REGION as string,
     credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+      accessKeyId: process.env.SITE_AWS_ACCESS_KEY_ID as string,
       secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET as string
     }
   });
@@ -77,8 +77,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
       const key = item.Key as string;
       const folderName = key.split("/")[0].replaceAll("_", "");
       const thisFolder = data.filter((i: Data) => i.Key.includes(key.split("/")[0]));
-      const randomObjectFromThisFolder: Data = thisFolder[Math.floor(Math.random() * thisFolder.length)];
-      const featured = process.env.AWS_BUCKET_URL + randomObjectFromThisFolder.Key;
+      const randomObject: Data = thisFolder[Math.floor(Math.random() * thisFolder.length)];
+      const featured = process.env.AWS_BUCKET_URL + randomObject.Key;
 
       if (arr.filter(i => i.name === folderName).length === 0) {
         arr.push({

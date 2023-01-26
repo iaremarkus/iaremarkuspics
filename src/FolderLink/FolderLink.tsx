@@ -66,7 +66,7 @@ export const FolderLink = ({ name, featured, count, className = "", ...props }: 
             className="fixed w-1/2 h-screen top-0 right-0 bg-slate-50 z-10"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={featured} alt={"Image"} className="object-cover h-full" />
+            <img src={featured} alt={"Image"} className="object-cover h-full w-full" />
           </motion.div>
         )}
       </AnimatePresence>

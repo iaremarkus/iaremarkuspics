@@ -30,7 +30,9 @@ export default function Home({ pictures }: any) {
       </Script>
 
       <Head>
-        <title>Photos of {name} | Photos by iaremarkus | cc IG: iaremarkuspics</title>
+        <title>
+          Photos of {name?.toString().replaceAll("-", " ") as string} | Photos by iaremarkus | cc IG: iaremarkuspics
+        </title>
         <meta name="description" content="Photos by iaremarkus | cc IG: iaremarkuspics" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link
@@ -66,32 +68,35 @@ export default function Home({ pictures }: any) {
 
 export const getServerSideProps: GetServerSideProps = async context => {
   const s3Client = new S3Client({
-    region: process.env.AWS_REGION as string,
+    region: process.env.SITE_AWS_REGION as string,
     credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+      accessKeyId: process.env.SITE_AWS_ACCESS_KEY_ID as string,
       secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET as string
     }
   });
 
   // Create the parameters for the bucket
-  const bucketParams = { Bucket: process.env.AWS_BUCKET as string };
+  const bucketParams = {
+    Bucket: `${process.env.AWS_BUCKET}` as string,
+    Prefix: ("_" + context.params?.name) as string
+  };
+
   let pictures: any[] = [];
 
   try {
     const { Contents } = await s3Client.send(new ListObjectsCommand(bucketParams));
     const data = Contents as [];
 
+    console.log("data", data);
+
     pictures = data
       .filter(({ Key }: { Key: string }) => Key.split("/")[0] === `_${context.params?.name}`)
       .reduce((arr: any[], item: any) => {
         const { Key } = item;
-        const key = Key.split("/")[1];
         const src = `${process.env.AWS_BUCKET_URL + Key}`;
-        const { name } = path.parse(key);
 
         arr.push({
-          src,
-          name
+          src
         });
 
         return arr;
