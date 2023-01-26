@@ -87,8 +87,6 @@ export const getServerSideProps: GetServerSideProps = async context => {
     const { Contents } = await s3Client.send(new ListObjectsCommand(bucketParams));
     const data = Contents as [];
 
-    console.log("data", data);
-
     pictures = data
       .filter(({ Key }: { Key: string }) => Key.split("/")[0] === `_${context.params?.name}`)
       .reduce((arr: any[], item: any) => {
