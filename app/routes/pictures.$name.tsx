@@ -1,11 +1,17 @@
 import { ListObjectsCommand, S3Client } from "@aws-sdk/client-s3";
-import type { LoaderFunction, MetaFunction } from "@remix-run/node";
+import type { HeadersFunction, LoaderFunction, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { useParams } from "react-router-dom";
 
 import { Footer, ModalImage } from "~/components";
+
+export let headers: HeadersFunction = () => {
+  return {
+    "Cache-Control": `public, max-age=${60 * 10}, s-maxage=${60 * 60 * 24 * 30}`
+  };
+};
 
 export let meta: MetaFunction = () => {
   return {
