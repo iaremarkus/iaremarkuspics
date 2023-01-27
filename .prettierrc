@@ -11,7 +11,7 @@
   "importOrder": [
     "<THIRD_PARTY_MODULES>",
 
-    "@/*$",
+    "^~/components(.*)$",
     "^contexts(.*)$",
     "^hooks(.*)$",
     "^utils(.*)$",
@@ -22,9 +22,7 @@
     "^molecules(.*)$",
     "^organisms(.*)$",
     "^templates(.*)$",
-    "^icons(.*)$",
-
-    "^queries(.*)$",
+    "^icons/(.*)$",
 
     "^[./]"
   ],
