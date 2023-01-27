@@ -7,7 +7,7 @@ export interface ModalImageProps {
   src: string;
 }
 
-export const ModalImage = ({ src, className = "", ...props }: ModalImageProps) => {
+export function ModalImage({ src, className = "", ...props }: ModalImageProps) {
   const [open, setOpen] = useState<boolean>(false);
   const toggleModal = () => setOpen(!open);
 
@@ -21,8 +21,12 @@ export const ModalImage = ({ src, className = "", ...props }: ModalImageProps) =
   return (
     <div>
       <motion.div whileHover={{ scale: 1.05 }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt="Image" onClick={toggleModal} className="cursor-pointer w-full h-full object-cover" />
+        <img
+          src={src}
+          alt="Captured by iaremarkuspics"
+          onClick={toggleModal}
+          className="cursor-pointer w-full h-full object-cover"
+        />
       </motion.div>
 
       <AnimatePresence>
@@ -34,11 +38,14 @@ export const ModalImage = ({ src, className = "", ...props }: ModalImageProps) =
             className="fixed w-full h-screen top-0 left-0 z-50 bg-slate-900 bg-opacity-80 flex items-center justify-center p-2 md:p-5 lg:p-10"
             onClick={toggleModal}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={src} alt="Image" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+            <img
+              src={src}
+              alt="Captured by iaremarkuspics"
+              style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            />
           </motion.div>
         )}
       </AnimatePresence>
     </div>
   );
-};
+}

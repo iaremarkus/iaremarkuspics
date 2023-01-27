@@ -4,7 +4,7 @@ export interface FooterProps {
   className?: string;
 }
 
-export const Footer = ({ className = "", ...props }: FooterProps) => {
+export function Footer({ className = "", ...props }: FooterProps) {
   return (
     <div
       className={classNames(
@@ -51,4 +51,4 @@ export const Footer = ({ className = "", ...props }: FooterProps) => {
       </a>
     </div>
   );
-};
+}

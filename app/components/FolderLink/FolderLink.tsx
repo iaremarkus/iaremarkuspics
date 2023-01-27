@@ -1,6 +1,6 @@
+import { Link } from "@remix-run/react";
 import classNames from "classnames";
 import { AnimatePresence, motion } from "framer-motion";
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 export interface FolderLinkProps {
@@ -10,7 +10,7 @@ export interface FolderLinkProps {
   count: number;
 }
 
-export const FolderLink = ({ name, featured, count, className = "", ...props }: FolderLinkProps) => {
+export function FolderLink({ name, featured, count, className = "", ...props }: FolderLinkProps) {
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const toggleIsHovered = () => setIsHovered(!isHovered);
 
@@ -34,7 +34,7 @@ export const FolderLink = ({ name, featured, count, className = "", ...props }: 
 
   return (
     <>
-      <Link href={`/pictures/${name}`} {...props} onMouseOver={toggleIsHovered} onMouseOut={toggleIsHovered}>
+      <Link to={`/pictures/${name}`} {...props} onMouseOver={toggleIsHovered} onMouseOut={toggleIsHovered}>
         <span
           className={classNames(
             "relative z-20 inline-flex capitalize text-4xl md:text-6xl lg:text-7xl font-bold",
@@ -65,11 +65,10 @@ export const FolderLink = ({ name, featured, count, className = "", ...props }: 
             animate={{ opacity: 1 }}
             className="fixed w-1/2 h-screen top-0 right-0 bg-slate-50 z-10"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={featured} alt={"Image"} className="object-cover h-full w-full" />
+            <img src={featured} alt={"Captured by iaremarkus"} className="object-cover h-full w-full" />
           </motion.div>
         )}
       </AnimatePresence>
     </>
   );
-};
+}
