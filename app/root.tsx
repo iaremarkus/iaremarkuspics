@@ -1,3 +1,4 @@
+import { json } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/node";
 import {
   Links,
@@ -12,7 +13,6 @@ import {
 import { useEffect } from "react";
 import * as gtag from "~/utils/gtags.client";
 
-import type { loader } from "./routes";
 import styles from "./styles/app.css";
 
 export let meta: MetaFunction = () => {
@@ -27,6 +27,10 @@ export let meta: MetaFunction = () => {
 export function links() {
   return [{ rel: "stylesheet", href: styles }];
 }
+
+export const loader = async () => {
+  return json({ gaTrackingId: process.env.GA_TRACKING_ID });
+};
 
 export default function App() {
   const location = useLocation();
